@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- ExoPlayer view (use_controller=false → we draw our own controls) -->
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:use_controller="false"
+        app:resize_mode="fit"
+        app:surface_type="surface_view" />
+
+    <!-- Loading spinner -->
+    <ProgressBar
+        android:id="@+id/pbPlayerLoading"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <!-- Subtitle text at bottom-center -->
+    <TextView
+        android:id="@+id/tvSubtitleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="80dp"
+        android:gravity="center"
+        android:padding="6dp"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="#66000000"
+        android:visibility="gone" />
+
+    <!-- Scrub overlay (shows ⏩ / ⏪ on double-tap) -->
+    <TextView
+        android:id="@+id/tvScrubOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="40sp"
+        android:padding="12dp"
+        android:background="#66000000"
+        android:visibility="gone" />
+
+    <!-- ═══════════ CONTROLS OVERLAY ═══════════ -->
+    <FrameLayout
+        android:id="@+id/controlsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bgOverlay"
+        android:visibility="visible">
+
+        <!-- TOP BAR -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp">
+
+            <ImageButton
+                android:id="@+id/ibPlayerBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/textPrimary"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="back" />
+
+            <TextView
+                android:id="@+id/tvPlayerTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/textPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp" />
+
+            <ImageButton
+                android:id="@+id/ibSettings"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_settings"
+                android:tint="@color/textPrimary"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="settings" />
+        </LinearLayout>
+
+        <!-- SIDE BARS: brightness (left) | volume (right) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="180dp"
+            android:layout_gravity="center_vertical|start"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_brightness"
+                android:tint="@color/textPrimary"
+                android:contentDescription="@null" />
+
+            <SeekBar
+                android:id="@+id/brightnessBar"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:rotation="270"
+                android:progressTint="@color/textPrimary"
+                android:thumbTint="@color/textPrimary"
+                android:max="255" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="180dp"
+            android:layout_gravity="center_vertical|end"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_volume"
+                android:tint="@color/textPrimary"
+                android:contentDescription="@null" />
+
+            <SeekBar
+                android:id="@+id/volumeBar"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:rotation="270"
+                android:progressTint="@color/textPrimary"
+                android:thumbTint="@color/textPrimary" />
+        </LinearLayout>
+
+        <!-- CENTER PLAY/SEEK BUTTONS -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/ibSeekBack"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_replay_10"
+                android:tint="@color/textPrimary"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="back 10s" />
+
+            <ImageButton
+                android:id="@+id/ibPlayPause"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_pause"
+                android:tint="@color/textPrimary"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:contentDescription="play/pause" />
+
+            <ImageButton
+                android:id="@+id/ibSeekForward"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_forward_10"
+                android:tint="@color/textPrimary"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="forward 10s" />
+        </LinearLayout>
+
+        <!-- BOTTOM BAR: time + seekbar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvCurrentTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="12sp"
+                    android:text="0:00" />
+
+                <SeekBar
+                    android:id="@+id/sbProgress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="1000"
+                    android:progressTint="@color/seekbarProgress"
+                    android:thumbTint="@color/seekbarThumb"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/tvTotalTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="12sp"
+                    android:text="0:00" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+
+</FrameLayout>

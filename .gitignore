@@ -1,0 +1,44 @@
+# Built outputs
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Build dirs
+build/
+.gradle/
+captures/
+
+# Android Studio / IntelliJ
+*.iml
+.idea/
+*.iws
+*.ipr
+local.properties
+
+# Keystore (never commit real keystores)
+*.jks
+*.keystore
+*.p12
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# NDK
+.externalNativeBuild/
+.cxx/
+
+# Lint
+lint/intermediates/
+lint/outputs/
+lint/tmp/
+
+# Room schema export
+app/schemas/
+
+# DataStore
+*.preferences_pb

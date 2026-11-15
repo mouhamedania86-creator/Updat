@@ -1,0 +1,116 @@
+name: Build MoviFlix APKs
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build APK — arm64 (64-bit) + arm32 (32-bit)"
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ── 1. Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history for versioning
+
+      # ── 2. Java 17 ──────────────────────────────────────────────────────────
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # ── 3. Setup Gradle (downloads real wrapper, handles caching) ────────────
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.6'   # overrides wrapper if jar is stub
+          cache-read-only: false
+
+      # ── 4. Grant execute permissions ────────────────────────────────────────
+      - name: Chmod gradlew
+        run: chmod +x gradlew
+
+      # ── 5. Build all ABI splits ──────────────────────────────────────────────
+      - name: Build Debug APKs
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      # ── 6. List built files ──────────────────────────────────────────────────
+      - name: List APKs
+        run: |
+          echo "=== Built APKs ==="
+          find app/build/outputs/apk -name "*.apk" -exec ls -lh {} \;
+
+      # ── 7. Rename for clarity ────────────────────────────────────────────────
+      - name: Rename APKs
+        run: |
+          cd app/build/outputs/apk/debug
+          [ -f app-arm64-v8a-debug.apk ]    && cp app-arm64-v8a-debug.apk    MoviFlix-arm64-64bit.apk
+          [ -f app-armeabi-v7a-debug.apk ]  && cp app-armeabi-v7a-debug.apk  MoviFlix-arm32-32bit.apk
+          [ -f app-universal-debug.apk ]    && cp app-universal-debug.apk    MoviFlix-universal.apk
+          ls -lh *.apk
+
+      # ── 8. Upload arm64 APK (64-bit) ─────────────────────────────────────────
+      - name: "📦 Upload arm64 APK (64-bit)"
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoviFlix-arm64-64bit
+          path: app/build/outputs/apk/debug/MoviFlix-arm64-64bit.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      # ── 9. Upload arm32 APK (32-bit) ─────────────────────────────────────────
+      - name: "📦 Upload arm32 APK (32-bit)"
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoviFlix-arm32-32bit
+          path: app/build/outputs/apk/debug/MoviFlix-arm32-32bit.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      # ── 10. Upload universal APK ──────────────────────────────────────────────
+      - name: "📦 Upload Universal APK"
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoviFlix-universal
+          path: app/build/outputs/apk/debug/MoviFlix-universal.apk
+          if-no-files-found: warn
+          retention-days: 30
+
+      # ── 11. Auto Release on tag push (v1.0.0, v1.2.3 ...) ───────────────────
+      - name: "🚀 Create GitHub Release"
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "MoviFlix ${{ github.ref_name }}"
+          body: |
+            ## 📱 MoviFlix ${{ github.ref_name }}
+
+            | ملف APK | الهواتف المدعومة |
+            |---------|-----------------|
+            | `MoviFlix-arm64-64bit.apk` | ✅ معظم الهواتف الحديثة (64-bit) |
+            | `MoviFlix-arm32-32bit.apk` | ✅ الهواتف القديمة (32-bit) |
+            | `MoviFlix-universal.apk`   | ✅ يشتغل على الكل (أكبر حجم) |
+
+            ### طريقة التثبيت
+            1. نزّل الملف المناسب لهاتفك
+            2. الإعدادات ← الأمان ← فعّل **مصادر غير معروفة**
+            3. افتح APK وثبّت
+          files: |
+            app/build/outputs/apk/debug/MoviFlix-arm64-64bit.apk
+            app/build/outputs/apk/debug/MoviFlix-arm32-32bit.apk
+            app/build/outputs/apk/debug/MoviFlix-universal.apk
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

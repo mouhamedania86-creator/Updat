@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MoviFlix</string>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_search">بحث</string>
+    <string name="nav_downloads">التنزيلات</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="play">تشغيل</string>
+    <string name="download">تنزيل</string>
+    <string name="episodes">الحلقات</string>
+    <string name="cast">الممثلون</string>
+    <string name="related">مشابه</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="continue_as_guest">المتابعة كزائر</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_quality">جودة الفيديو</string>
+    <string name="settings_subtitle">لغة الترجمة</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="no_downloads">لا توجد تنزيلات بعد</string>
+    <string name="no_results">لا توجد نتائج</string>
+    <string name="loading">جاري التحميل...</string>
+    <string name="search_hint">ابحث عن أفلام ومسلسلات...</string>
+</resources>

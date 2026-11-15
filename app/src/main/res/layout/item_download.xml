@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="12dp"
+    android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/ivDownloadCover"
+        android:layout_width="80dp"
+        android:layout_height="56dp"
+        android:scaleType="centerCrop"
+        android:background="@color/bgCard"
+        android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="6dp">
+
+        <TextView
+            android:id="@+id/tvDownloadContentTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textPrimary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/tvDownloadEpisodeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/tvDownloadQuality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:textSize="11sp"
+                android:background="@drawable/bg_quality_badge"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp" />
+
+            <TextView
+                android:id="@+id/tvDownloadStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textHint"
+                android:textSize="11sp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnDownloadPlay"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_play"
+        android:tint="@color/textPrimary"
+        android:background="@drawable/bg_circle_red"
+        android:contentDescription="play" />
+
+    <ImageButton
+        android:id="@+id/btnDownloadDelete"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_delete"
+        android:tint="@color/textSecondary"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_marginStart="8dp"
+        android:contentDescription="delete" />
+
+</LinearLayout>

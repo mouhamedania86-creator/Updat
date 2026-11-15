@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">hitv.ltd</domain>
+        <domain includeSubdomains="true">akm-cdn-play.hitv.ltd</domain>
+        <domain includeSubdomains="true">img.hitv.ltd</domain>
+        <domain includeSubdomains="true">subsrt.hitv.ltd</domain>
+        <domain includeSubdomains="true">mobile-api.hitv.ltd</domain>
+        <domain includeSubdomains="true">static.hitv.ltd</domain>
+    </domain-config>
+</network-security-config>
