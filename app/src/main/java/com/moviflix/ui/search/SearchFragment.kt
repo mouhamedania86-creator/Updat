@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
