@@ -1,6 +1,8 @@
 package com.moviflix.models
 
 import com.google.gson.annotations.SerializedName
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 // ── Generic wrapper ───────────────────────────────────────────────────────────
 data class ApiResponse<T>(
@@ -84,7 +86,7 @@ data class HomeItem(
     @SerializedName("id") val id: String,
     @SerializedName("title") val title: String,
     @SerializedName("cover") val cover: String,
-    @SerializedName("domainType") val domainType: Int,  // 0=movie, 1=TV
+    @SerializedName("domainType") val domainType: Int,
     @SerializedName("subType") val subType: String,
     @SerializedName("cornerInfoList") val cornerInfoList: List<CornerInfo>,
     @SerializedName("navigationId") val navigationId: Long?,
@@ -234,14 +236,14 @@ data class LanguageItem(
 )
 
 data class DefinitionItem(
-    @SerializedName("code") val code: String,  // GROOT_LD, GROOT_SD, GROOT_HD, GROOT_FHD
+    @SerializedName("code") val code: String,
     @SerializedName("name") val name: String,
     @SerializedName("vip") val vip: Boolean
 )
 
 // ── Preview / Play info (decrypted) ───────────────────────────────────────────
 data class PlayInfo(
-    @SerializedName("url") val url: String,         // HLS m3u8 URL
+    @SerializedName("url") val url: String,
     @SerializedName("urlList") val urlList: List<String>?,
     @SerializedName("drm") val drm: Boolean?,
     @SerializedName("duration") val duration: Long?,
@@ -330,9 +332,6 @@ enum class VideoQuality(val code: String, val label: String) {
 }
 
 // ── Room download entity ──────────────────────────────────────────────────────
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
 @Entity(tableName = "downloads")
 data class DownloadEntity(
     @PrimaryKey val episodeId: String,
@@ -346,5 +345,5 @@ data class DownloadEntity(
     val downloadedAt: Long = System.currentTimeMillis(),
     val quality: String = "GROOT_HD",
     val language: String = "ar",
-    val status: Int = 0  // 0=pending, 1=downloading, 2=done, 3=failed
+    val status: Int = 0
 )
