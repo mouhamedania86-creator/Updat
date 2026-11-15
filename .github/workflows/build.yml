@@ -19,8 +19,6 @@ jobs:
       # ── 1. Checkout ─────────────────────────────────────────────────────────
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0          # full history for versioning
 
       # ── 2. Java 17 ──────────────────────────────────────────────────────────
       - name: Set up JDK 17
@@ -29,38 +27,47 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # ── 3. Setup Gradle (downloads real wrapper, handles caching) ────────────
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.6'   # overrides wrapper if jar is stub
-          cache-read-only: false
+      # ── 3. Download the REAL gradle-wrapper.jar ──────────────────────────────
+      #    The jar committed in the repo is a stub placeholder.
+      #    We fetch the official one from Gradle's GitHub before anything else.
+      - name: Download gradle-wrapper.jar
+        run: |
+          mkdir -p gradle/wrapper
+          curl -fsSL \
+            "https://raw.githubusercontent.com/gradle/gradle/v8.6.0/gradle/wrapper/gradle-wrapper.jar" \
+            -o gradle/wrapper/gradle-wrapper.jar
+          echo "wrapper jar size: $(wc -c < gradle/wrapper/gradle-wrapper.jar) bytes"
 
-      # ── 4. Grant execute permissions ────────────────────────────────────────
+      # ── 4. Cache Gradle home ─────────────────────────────────────────────────
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      # ── 5. Grant execute permission ──────────────────────────────────────────
       - name: Chmod gradlew
         run: chmod +x gradlew
 
-      # ── 5. Build all ABI splits ──────────────────────────────────────────────
+      # ── 6. Build all ABI splits ──────────────────────────────────────────────
       - name: Build Debug APKs
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
-      # ── 6. List built files ──────────────────────────────────────────────────
-      - name: List APKs
-        run: |
-          echo "=== Built APKs ==="
-          find app/build/outputs/apk -name "*.apk" -exec ls -lh {} \;
-
-      # ── 7. Rename for clarity ────────────────────────────────────────────────
+      # ── 7. Rename APKs ───────────────────────────────────────────────────────
       - name: Rename APKs
         run: |
           cd app/build/outputs/apk/debug
-          [ -f app-arm64-v8a-debug.apk ]    && cp app-arm64-v8a-debug.apk    MoviFlix-arm64-64bit.apk
-          [ -f app-armeabi-v7a-debug.apk ]  && cp app-armeabi-v7a-debug.apk  MoviFlix-arm32-32bit.apk
-          [ -f app-universal-debug.apk ]    && cp app-universal-debug.apk    MoviFlix-universal.apk
+          ls -lh
+          [ -f app-arm64-v8a-debug.apk ]   && cp app-arm64-v8a-debug.apk   MoviFlix-arm64-64bit.apk
+          [ -f app-armeabi-v7a-debug.apk ] && cp app-armeabi-v7a-debug.apk MoviFlix-arm32-32bit.apk
+          [ -f app-universal-debug.apk ]   && cp app-universal-debug.apk   MoviFlix-universal.apk
           ls -lh *.apk
 
-      # ── 8. Upload arm64 APK (64-bit) ─────────────────────────────────────────
-      - name: "📦 Upload arm64 APK (64-bit)"
+      # ── 8. Upload arm64 (64-bit) ─────────────────────────────────────────────
+      - name: "📦 arm64 APK (64-bit)"
         uses: actions/upload-artifact@v4
         with:
           name: MoviFlix-arm64-64bit
@@ -68,8 +75,8 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      # ── 9. Upload arm32 APK (32-bit) ─────────────────────────────────────────
-      - name: "📦 Upload arm32 APK (32-bit)"
+      # ── 9. Upload arm32 (32-bit) ─────────────────────────────────────────────
+      - name: "📦 arm32 APK (32-bit)"
         uses: actions/upload-artifact@v4
         with:
           name: MoviFlix-arm32-32bit
@@ -77,8 +84,8 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      # ── 10. Upload universal APK ──────────────────────────────────────────────
-      - name: "📦 Upload Universal APK"
+      # ── 10. Upload universal ──────────────────────────────────────────────────
+      - name: "📦 Universal APK"
         uses: actions/upload-artifact@v4
         with:
           name: MoviFlix-universal
@@ -86,7 +93,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
-      # ── 11. Auto Release on tag push (v1.0.0, v1.2.3 ...) ───────────────────
+      # ── 11. GitHub Release on tag (v1.0.0 …) ────────────────────────────────
       - name: "🚀 Create GitHub Release"
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
@@ -99,18 +106,12 @@ jobs:
             |---------|-----------------|
             | `MoviFlix-arm64-64bit.apk` | ✅ معظم الهواتف الحديثة (64-bit) |
             | `MoviFlix-arm32-32bit.apk` | ✅ الهواتف القديمة (32-bit) |
-            | `MoviFlix-universal.apk`   | ✅ يشتغل على الكل (أكبر حجم) |
-
-            ### طريقة التثبيت
-            1. نزّل الملف المناسب لهاتفك
-            2. الإعدادات ← الأمان ← فعّل **مصادر غير معروفة**
-            3. افتح APK وثبّت
+            | `MoviFlix-universal.apk`   | ✅ يشتغل على الكل |
           files: |
             app/build/outputs/apk/debug/MoviFlix-arm64-64bit.apk
             app/build/outputs/apk/debug/MoviFlix-arm32-32bit.apk
             app/build/outputs/apk/debug/MoviFlix-universal.apk
           draft: false
           prerelease: false
-          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
