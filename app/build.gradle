@@ -1,8 +1,8 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-parcelize'
-    id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
+    id 'org.jetbrains.kotlin.kapt'
 }
 
 android {
@@ -16,18 +16,13 @@ android {
         versionCode 1
         versionName "1.0.0"
 
-        // Support both arm64-v8a (64-bit) and armeabi-v7a (32-bit)
-        ndk {
-            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
-        }
-
         multiDexEnabled true
 
-        buildConfigField "String", "API_BASE_URL", '"https://mobile-api.hitv.ltd"'
-        buildConfigField "String", "IMG_CDN", '"https://img.hitv.ltd"'
-        buildConfigField "String", "SUBTITLE_CDN", '"https://subsrt.hitv.ltd"'
-        buildConfigField "String", "CLIENT_TYPE", '"android_hitv0426"'
-        buildConfigField "String", "VERSION_CODE", '"133"'
+        buildConfigField "String", "API_BASE_URL",   '"https://mobile-api.hitv.ltd"'
+        buildConfigField "String", "IMG_CDN",        '"https://img.hitv.ltd"'
+        buildConfigField "String", "SUBTITLE_CDN",   '"https://subsrt.hitv.ltd"'
+        buildConfigField "String", "CLIENT_TYPE",    '"android_hitv0426"'
+        buildConfigField "String", "VERSION_CODE",   '"133"'
         buildConfigField "String", "RSA_PUBLIC_KEY", '"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCYo79ZFZHFCyboUBinm/I1OR7Obq2Do+4sMufINvD2Qw5fYvZeSYR24/lxRMsZnlbcP0a3/lG9dyX2G0ljvQwBSdCW9jTBBaOJiSW1M2DEFCP5/6ObJ7WCwDKxVVxebhzlzhGjjuPB86vsVVwYXTFtTZKfuTk3SQnpta/TOFE6cwIDAQAB"'
     }
 
@@ -47,6 +42,7 @@ android {
         }
         debug {
             minifyEnabled false
+            debuggable true
         }
     }
 
@@ -64,7 +60,7 @@ android {
         buildConfig true
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += ['META-INF/DEPENDENCIES', 'META-INF/LICENSE', 'META-INF/LICENSE.txt']
         }
@@ -82,56 +78,41 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
-    // Lifecycle
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
 
-    // Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.6'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.6'
 
-    // Networking
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-    // Gson
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    // Image Loading
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     kapt 'com.github.bumptech.glide:compiler:4.16.0'
 
-    // ExoPlayer / Media3 for HLS streaming
     implementation 'androidx.media3:media3-exoplayer:1.3.0'
     implementation 'androidx.media3:media3-exoplayer-hls:1.3.0'
     implementation 'androidx.media3:media3-ui:1.3.0'
     implementation 'androidx.media3:media3-datasource-okhttp:1.3.0'
     implementation 'androidx.media3:media3-exoplayer-dash:1.3.0'
 
-    // Crypto - BouncyCastle for RSA+AES
     implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 
-    // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
 
-    // Room for offline downloads DB
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'androidx.room:room-ktx:2.6.1'
     kapt 'androidx.room:room-compiler:2.6.1'
 
-    // DataStore for preferences
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
-    // WorkManager for download tasks
     implementation 'androidx.work:work-runtime-ktx:2.9.0'
 
-    // Shimmer loading effect
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-
-    // StatusBar util
-    implementation 'com.jaeger.statusbarutil:library:1.5.1'
 }
